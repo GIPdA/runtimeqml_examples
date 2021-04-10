@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("RuntimeQML", rt);
 
-    //engine.load(QUrl(QLatin1String("qrc:/main.qml"))); // Replaced by rt->reload()
-    rt->reload();
+    //engine.load(QUrl(QLatin1String("qrc:/main.qml"))); // Replaced by rt->load()
+    rt->load(); // Only once in main(), use reload() for subsequent reloads!
 
     return app.exec();
 }
