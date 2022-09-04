@@ -1,13 +1,12 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-        <file>Page1.qml</file>
-        <file>Page1Form.ui.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/Frame1.qml</file>
+        <file>qml/Frame2.qml</file>
+        <file>qml/FrameNoReload.qml</file>
         <file>qtquickcontrols2.conf</file>
-        <file>Page2.qml</file>
-        <file>pages/Page3.qml</file>
     </qresource>
-    <qresource prefix="/test">
-        <file alias="page4">Page4.qml</file>
+    <qresource prefix="/noreload">
+        <file>qml/FrameInNoReloadPrefix.qml</file>
     </qresource>
 </RCC>

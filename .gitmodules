@@ -1,0 +1,3 @@
+[submodule "runtimeqml"]
+	path = runtimeqml
+	url = https://github.com/GIPdA/runtimeqml.git

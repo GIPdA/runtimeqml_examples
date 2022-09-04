@@ -2,33 +2,37 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "runtimeqml.h"
+#include <runtimeqml.hpp>
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
-
 
     QQmlApplicationEngine engine;
 
-    // QRC_RUNTIME_SOURCE_PATH is defined in the .pro/.qbs of this example to $$PWD
-    // In other projects where runtimeqml folder is on the same level of the .pro, you can use QRC_SOURCE_PATH (defined in runtimeqml.pri/qbs)
-    RuntimeQML *rt = new RuntimeQML(&engine, QRC_RUNTIME_SOURCE_PATH "/qml.qrc");
+    const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+        if (!obj && url == objUrl)
+            QCoreApplication::exit(-1);
+    }, Qt::QueuedConnection);
 
-    //rt->noDebug();
-    //rt->addSuffix("conf");
-    //rt->ignorePrefix("/test");
-    //rt->ignoreFile("Page2.qml");
-    rt->setAutoReload(true);
-    //rt->setCloseAllOnReload(false);
+#ifdef QT_DEBUG
+    // In projects where runtimeqml folder is on the same level of the .pro,
+    // you can use QRC_SOURCE_PATH (defined in runtimeqml.pri/qbs)
 
-    //rt->setMainQmlFilename("main.qml"); // Default is "main.qml"
+    RuntimeQml *rt = new RuntimeQml(&engine);
+    rt->addQrcPrefixIgnoreFilter("noreload");
+    rt->addIgnoreFilter("*NoReload.qml");
+    rt->parseQrc(QRC_SOURCE_PATH "/qml.qrc");
+    rt->setAutoReload(true); // Reload automatically on file update
 
-    engine.rootContext()->setContextProperty("RuntimeQML", rt);
+    engine.rootContext()->setContextProperty("RuntimeQml", rt);
 
-    //engine.load(QUrl(QLatin1String("qrc:/main.qml"))); // Replaced by rt->load()
-    rt->load(); // Only once in main(), use reload() for subsequent reloads!
+    rt->load(url);
+#else
+    engine.load(url);
+#endif
 
     return app.exec();
 }
